@@ -9,6 +9,8 @@ import { Arr, Fun, Future, Futures, Obj, Result, Results } from '@ephox/katamari
 import { Attribute, Insert, Remove, SelectorFind, SugarElement, SugarShadowDom, Traverse } from '@ephox/sugar';
 import Delay from '../util/Delay';
 import Tools from '../util/Tools';
+import cssSkin from './HackSkinCss';
+import cssContent from './HackContentCss';
 
 /**
  * This class handles loading of external stylesheets and fires events when these are loaded.
@@ -78,6 +80,12 @@ export function StyleSheetLoader(documentOrShadowRoot: Document | ShadowRoot, se
    */
   const load = (url: string, success: () => void, failure?: () => void) => {
     let link: HTMLLinkElement;
+
+    /* eslint-disable no-console */
+    console.log('t1');
+    console.log(url);
+  	console.log(cssSkin.length);
+  	console.log(cssContent.length);
 
     const urlWithSuffix = Tools._addCacheSuffix(url);
 
