@@ -11,7 +11,6 @@ import Annotator from '../api/Annotator';
 import DOMUtils from '../api/dom/DOMUtils';
 import EditorSelection from '../api/dom/Selection';
 import DomSerializer, { DomSerializerSettings } from '../api/dom/Serializer';
-import { StyleSheetLoader } from '../api/dom/StyleSheetLoader';
 import Editor from '../api/Editor';
 import EditorUpload from '../api/EditorUpload';
 import Env from '../api/Env';
@@ -40,6 +39,8 @@ import * as SelectionBookmark from '../selection/SelectionBookmark';
 import { hasAnyRanges } from '../selection/SelectionUtils';
 import SelectionOverrides from '../SelectionOverrides';
 import Quirks from '../util/Quirks';
+import cssSkin from '../api/dom/HackSkinCss';
+import cssContent from '../api/dom/HackContentCss';
 
 declare const escape: any;
 
@@ -49,13 +50,30 @@ const appendStyle = (editor: Editor, text: string) => {
   const body = SugarElement.fromDom(editor.getBody());
   const container = SugarShadowDom.getStyleContainer(SugarShadowDom.getRootNode(body));
 
+  /* eslint-disable no-console */
+  console.log('a1');
+  console.log(text);
+
   const style = SugarElement.fromTag('style');
   Attribute.set(style, 'type', 'text/css');
   Insert.append(style, SugarElement.fromText(text));
   Insert.append(container, style);
 
+  const style2 = SugarElement.fromTag('style');
+  Attribute.set(style2, 'type', 'text/css');
+  Insert.append(style2, SugarElement.fromText(cssSkin));
+  Insert.append(container, style2);
+
+  const style3 = SugarElement.fromTag('style');
+  Attribute.set(style3, 'type', 'text/css');
+  Insert.append(style3, SugarElement.fromText(cssContent));
+  Insert.append(container, style3);
+
+
   editor.on('remove', () => {
     Remove.remove(style);
+    Remove.remove(style2);
+    Remove.remove(style3);
   });
 };
 
@@ -265,19 +283,19 @@ const initEditor = function (editor: Editor) {
   autoFocus(editor);
 };
 
-const getStyleSheetLoader = (editor: Editor): StyleSheetLoader =>
-  editor.inline ? editor.ui.styleSheetLoader : editor.dom.styleSheetLoader;
-
 const loadContentCss = (editor: Editor, css: string[]) => {
+  /*
   const styleSheetLoader = getStyleSheetLoader(editor);
-
   const loaded = () => {
     editor.on('remove', () => styleSheetLoader.unloadAll(css));
     initEditor(editor);
   };
-
   // Load all stylesheets
   styleSheetLoader.loadAll(css, loaded, loaded);
+  */
+  console.log('s1');
+  initEditor(editor);
+  console.log('s2');
 };
 
 const preInit = (editor: Editor, rtcMode: boolean) => {
@@ -335,8 +353,10 @@ const preInit = (editor: Editor, rtcMode: boolean) => {
 
   loadContentCss(editor, editor.contentCSS);
 
+  console.log('z1');
   // Append specified content CSS last
   if (settings.content_style) {
+    console.log('z2');
     appendStyle(editor, settings.content_style);
   }
 };

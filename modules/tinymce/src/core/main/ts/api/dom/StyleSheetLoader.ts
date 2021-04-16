@@ -10,6 +10,7 @@ import { Attribute, Insert, Remove, SelectorFind, SugarElement, SugarShadowDom, 
 import Tools from '../util/Tools';
 import cssSkin from './HackSkinCss';
 import cssContent from './HackContentCss';
+import cssGoogle from './HackGoogleCss';
 
 /**
  * This class handles loading of external stylesheets and fires events when these are loaded.
@@ -78,7 +79,7 @@ export function StyleSheetLoader(documentOrShadowRoot: Document | ShadowRoot, se
   const load = (url: string, success: () => void, failure?: () => void) => {
 
     /* eslint-disable no-console */
-    console.log('t1');
+    console.log('t5');
     console.log(url);
   	console.log(cssSkin.length);
   	console.log(cssContent.length);
@@ -92,88 +93,77 @@ export function StyleSheetLoader(documentOrShadowRoot: Document | ShadowRoot, se
     const resolve = (callbacks: Array<() => void>, status: number) => {
       let i = callbacks.length;
       while (i--) {
-        console.log('t3');
+        console.log('t14');
         console.log(callbacks[i]);
         callbacks[i]();
-        console.log('t4');
+        console.log('t13');
       }
-
-      console.log('t5');
 
       state.status = status;
       state.passed = [];
       state.failed = [];
-
-      console.log('t6');
     };
 
     const passed = () => resolve(state.passed, 2);
     const failed = () => resolve(state.failed, 3);
-
-    console.log('t12.1');
-    console.log(success);
 
     if (success) {
       state.passed.push(success);
     }
 
     if (failure) {
+      console.log('t12');
       state.failed.push(failure);
     }
 
-    console.log('t12.1');
     // Is loading wait for it to pass
     if (state.status === 1) {
-      console.log('t12.2');
+      console.log('t11');
       return;
     }
 
-    console.log('t12.3');
     // Has finished loading and was success
     if (state.status === 2) {
-      console.log('t12.4');
       passed();
       return;
     }
 
     // Has finished loading and was a failure
-    console.log('t12.5');
     if (state.status === 3) {
-      console.log('t12.6');
+      console.log('t10');
       failed();
       return;
     }
-
-    console.log('t13');
 
     // Start loading
     state.status = 2;
     const styleElem = SugarElement.fromTag('style', doc.dom);
     Attribute.setAll(styleElem, {
-      type: 'test/css'
+      type: 'text/css'
     });
 
     const style = styleElem.dom;
 
-    console.log('t16');
-
-    console.log(urlWithSuffix);
     if (urlWithSuffix.match(/content.min.css/)) {
-      console.log('t16.1');
+      console.log('t9');
       style.innerHTML = cssContent;
     } else if (urlWithSuffix.match(/skin.min.css/)) {
-      console.log('t16.2');
+      console.log('t8');
       style.innerHTML = cssSkin;
+    } else if (urlWithSuffix.match(/css2/)) {
+      console.log('t888');
+      style.innerHTML = cssGoogle;
     }
 
+    console.log('t7');
     addStyle(styleElem);
+    console.log('t6');
 
-    console.log('t17');
   };
 
   const loadF = (url: string): Future<Result<string, string>> =>
     Future.nu((resolve) => {
-      console.log('t18');
+      console.log('t5');
       load(
         url,
         Fun.compose(resolve, Fun.constant(Result.value(url))),
@@ -190,15 +180,14 @@ export function StyleSheetLoader(documentOrShadowRoot: Document | ShadowRoot, se
    * @param {Function} failure Callback to be executed when the style sheets fail to load.
    */
   const loadAll = (urls: string[], success: (urls: string[]) => void, failure: (urls: string[]) => void) => {
-    console.log('t19');
+    console.log('t4');
     Futures.par(Arr.map(urls, loadF)).get((result) => {
       const parts = Arr.partition(result, (r) => r.isValue());
-      console.log('t20');
       if (parts.fail.length > 0) {
-        console.log('t21');
+        console.log('t2');
         failure(parts.fail.map(Results.unite));
       } else {
-        console.log('t22');
+        console.log('t3');
         success(parts.pass.map(Results.unite));
       }
     });
@@ -211,6 +200,7 @@ export function StyleSheetLoader(documentOrShadowRoot: Document | ShadowRoot, se
    * @param {String} url URL to unload or remove.
    */
   const unload = (url: string) => {
+    console.log('t1');
     const urlWithSuffix = Tools._addCacheSuffix(url);
     Obj.get(loadedStates, urlWithSuffix).each((state) => {
       const count = --state.count;
