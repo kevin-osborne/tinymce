@@ -5,7 +5,7 @@
  * For commercial licenses see https://www.tiny.cloud/
  */
 
-import { document, window } from '@ephox/dom-globals';
+import { console, document, window } from '@ephox/dom-globals';
 import { Insert, Element, Attr } from '@ephox/sugar';
 import EditorUpload from '../api/EditorUpload';
 import ForceBlocks from '../ForceBlocks';
@@ -28,6 +28,9 @@ import Editor from '../api/Editor';
 import * as MultiClickSelection from '../selection/MultiClickSelection';
 import * as DetailsElement from '../selection/DetailsElement';
 import Settings from '../api/Settings';
+import cssSkin from '../api/dom/HackSkinCss';
+import cssContent from '../api/dom/HackContentCss';
+import cssGoogle from '../api/dom/HackGoogleCss';
 
 declare const escape: any;
 
@@ -271,6 +274,13 @@ const initContentBody = function (editor: Editor, skipWrite?: boolean) {
   editor.on('compositionstart compositionend', function (e) {
     editor.composing = e.type === 'compositionstart';
   });
+
+  /* eslint-disable no-console */
+  // tslint:disable-next-line:no-console
+  console.log('t1');
+  appendStyle(editor, cssGoogle);
+  appendStyle(editor, cssSkin);
+  appendStyle(editor, cssContent);
 
   // Add editor specific CSS styles
   if (editor.contentStyles.length > 0) {
