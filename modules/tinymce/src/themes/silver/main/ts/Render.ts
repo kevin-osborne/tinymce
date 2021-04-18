@@ -314,12 +314,6 @@ const setup = (editor: Editor): RenderInfo => {
           .concat(isToolbarBottom ? [ 'tox-tinymce--toolbar-bottom' ] : [])
           .concat(deviceClasses)
           .concat(platformClasses),
-        styles: {
-          // This is overridden by the skin, it helps avoid FOUC
-          visibility: 'hidden',
-          // Hide the container if needed, but don't use "display: none" so that it still has a position
-          ...isHidden ? { opacity: '0', border: '0' } : {}
-        },
         attributes
       },
       components: containerComponents,
